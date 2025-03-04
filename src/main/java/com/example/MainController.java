@@ -1,5 +1,7 @@
 package com.example;
 
+import java.util.ArrayList;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -12,8 +14,8 @@ import javafx.util.Duration;
 public class MainController {    
 
     private Timeline timeline = new Timeline();
-    private Vehicle vehicle1;
-    private Vehicle vehicle2;
+    private ArrayList<Vehicle> vehicleList = new ArrayList<Vehicle>();
+
     private int TARGET = 800;
 
     @FXML
@@ -24,30 +26,32 @@ public class MainController {
 
     @FXML
     void initialize() {
-        vehicle1 = new Vehicle("Piros", Color.RED, 150);
-        vehicle2 = new Vehicle("Kék", Color.BLUE, 190);
-        panel.getChildren().add(vehicle1);
-        panel.getChildren().add(vehicle2);
+        vehicleList.add(new Vehicle("Piros", Color.RED, 150));
+        vehicleList.add(new Vehicle("Kék", Color.BLUE, 190));
+        vehicleList.add(new Vehicle("Zöld", Color.GREEN, 230));
+
+        for(Vehicle vehicle : vehicleList) {
+            panel.getChildren().add(vehicle);
+        }
 
         timeline.setCycleCount(Timeline.INDEFINITE);
         KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.03), e -> {
-        
-            if ((vehicle1.getX() + vehicle1.getWidth()) > TARGET) {
-                addToList(vehicle1.name);
-            }
-            if (vehicle1.getX() < 810) {
-                vehicle1.move();            
-            }
-            if ((vehicle2.getX() + vehicle2.getWidth()) > TARGET) {
-                addToList(vehicle2.name);
-            }            
-            if (vehicle2.getX() < 810) {
-                vehicle2.move();
-            }
 
-            if(vehicle1.getX() >= 810 && vehicle2.getX() >= 810) {
-                timeline.stop();
+            boolean isStopped = true;
+            for(Vehicle vehicle : vehicleList) {
+                if ((vehicle.getX() + vehicle.getWidth()) > TARGET) {
+                    addToList(vehicle.name);
+                }
+                if (vehicle.getX() < 810) {
+                    vehicle.move();            
+                }                
+                if (vehicle.getX() < 810) {
+                    isStopped = false;
+                }    
             }
+            if (isStopped) {
+                timeline.stop();
+            }            
         });
         timeline.getKeyFrames().add(keyFrame);       
     }
@@ -59,8 +63,9 @@ public class MainController {
 
     @FXML
     void onClickResetButton(ActionEvent event) {
-        vehicle1.moveToStart();
-        vehicle2.moveToStart();
+        for(Vehicle vehicle : vehicleList) {
+            vehicle.moveToStart();
+        }
         list.getItems().clear();
     }
 
