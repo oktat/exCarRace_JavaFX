@@ -62,7 +62,12 @@ public class MainController {
         vehicle1.moveToStart();
         vehicle2.moveToStart();
         list.getItems().clear();
-    } 
+    }
+
+    @FXML
+    void onClickStopButton(ActionEvent event) {
+        timeline.stop();
+    }
     
     private void addToList(String name) {
         if(list.getItems().contains(name)) {
